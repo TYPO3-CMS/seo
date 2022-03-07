@@ -12,6 +12,15 @@
                 <f:if condition="{item.priority}">
                     <priority>{item.priority}</priority>
                 </f:if>
+                <f:if condition="{item.image} && {item.image.loc}">
+                    <image:image>
+                        <image:loc>{item.image.loc}</image:loc>
+                        <f:if condition="{item.image.caption}"><image:caption>{item.image.caption}</image:caption></f:if>
+                        <f:if condition="{item.image.geo_location}"><image:geo_location>{item.image.geo_location}</image:geo_location></f:if>
+                        <f:if condition="{item.image.title}"><image:title>{item.image.title}</image:title></f:if>
+                        <f:if condition="{item.image.license}"><image:license>{item.image.license}</image:license></f:if>
+                    </image:image>
+                </f:if>
             </url>
         </f:if>
     </f:for>
