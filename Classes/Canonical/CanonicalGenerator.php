@@ -21,6 +21,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
 use TYPO3\CMS\Core\Domain\Page;
+use TYPO3\CMS\Core\Domain\RecordFactory;
 use TYPO3\CMS\Core\Domain\Repository\PageRepository;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Type\DocType;
@@ -42,6 +43,7 @@ readonly class CanonicalGenerator
     public function __construct(
         private EventDispatcherInterface $eventDispatcher,
         private PageRenderer $pageRenderer,
+        private RecordFactory $recordFactory,
     ) {}
 
     public function generate(array $params): string
@@ -73,8 +75,10 @@ readonly class CanonicalGenerator
             }
         } catch (CanonicalGenerationDisabledException $canonicalGenerationDisabledException) {
         } finally {
+            /** @var Page $page */
+            $page = $this->recordFactory->createFromDatabaseRow('pages', $pageRecord);
             $event = $this->eventDispatcher->dispatch(
-                new ModifyUrlForCanonicalTagEvent($request, new Page($pageRecord), $href, $canonicalGenerationDisabledException)
+                new ModifyUrlForCanonicalTagEvent($request, $page, $href, $canonicalGenerationDisabledException)
             );
             $href = $event->getUrl();
         }

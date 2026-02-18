@@ -22,7 +22,7 @@ use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Context\LanguageAspect;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryHelper;
-use TYPO3\CMS\Core\Domain\Page;
+use TYPO3\CMS\Core\Domain\RecordFactory;
 use TYPO3\CMS\Core\Domain\Repository\PageRepository;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
@@ -108,7 +108,7 @@ class PagesXmlSitemapDataProvider extends AbstractXmlSitemapDataProvider
     protected function defineUrl(array $data): array
     {
         $typoLinkConfig = [
-            'page' => new Page($data),
+            'page' => GeneralUtility::makeInstance(RecordFactory::class)->createFromDatabaseRow('pages', $data),
             'parameter' => $data['uid'],
             'forceAbsoluteUrl' => 1,
         ];

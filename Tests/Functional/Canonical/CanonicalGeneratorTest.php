@@ -173,8 +173,27 @@ final class CanonicalGeneratorTest extends FunctionalTestCase
         $pageInformation->setId(123);
         $pageRecord = [
             'uid' => 123,
+            'pid' => 0,
+            'doktype' => 1,
             'no_index' => 1,
             'canonical_link' => '',
+            'sys_language_uid' => 0,
+            'l10n_parent' => 0,
+            'l10n_source' => 0,
+            't3ver_wsid' => 0,
+            't3ver_oid' => 0,
+            't3ver_state' => 0,
+            't3ver_stage' => 0,
+            'deleted' => 0,
+            'hidden' => 0,
+            'starttime' => 0,
+            'endtime' => 0,
+            'fe_group' => '',
+            'editlock' => 0,
+            'crdate' => 0,
+            'tstamp' => 0,
+            'sorting' => 0,
+            'rowDescription' => '',
         ];
         $pageInformation->setPageRecord($pageRecord);
         $request = $request->withAttribute('frontend.page.information', $pageInformation);
