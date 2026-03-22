@@ -23,6 +23,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
 use TYPO3\CMS\Core\Domain\Page;
 use TYPO3\CMS\Core\Domain\Repository\PageRepository;
 use TYPO3\CMS\Core\Page\PageRenderer;
+use TYPO3\CMS\Core\Type\DocType;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\RootlineUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
@@ -51,8 +52,8 @@ readonly class CanonicalGenerator
         $canonicalGenerationDisabledException = null;
 
         $href = '';
+        $typoScriptConfigArray = $request->getAttribute('frontend.typoscript')->getConfigArray();
         try {
-            $typoScriptConfigArray = $request->getAttribute('frontend.typoscript')->getConfigArray();
             if ($typoScriptConfigArray['disableCanonical'] ?? false) {
                 throw new CanonicalGenerationDisabledException('Generation of the canonical tag is disabled via TypoScript "disableCanonical"', 1706104146);
             }
@@ -79,12 +80,12 @@ readonly class CanonicalGenerator
         }
 
         if ($href !== '') {
+            $docType = DocType::createFromConfigurationKey($typoScriptConfigArray['doctype'] ?? '');
             $canonical = '<link ' . GeneralUtility::implodeAttributes([
                 'rel' => 'canonical',
                 'href' => $href,
-            ], true) . ($this->pageRenderer->getDocType()->isXmlCompliant() ? '/' : '') . '>' . LF;
-            $pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
-            $pageRenderer->addHeaderData($canonical);
+            ], true) . ($docType->isXmlCompliant() ? '/' : '') . '>' . LF;
+            $this->pageRenderer->addHeaderData($canonical);
             return $canonical;
         }
         return '';
