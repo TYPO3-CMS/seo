@@ -128,38 +128,26 @@ class RecordsXmlSitemapDataProvider extends AbstractXmlSitemapDataProvider
     {
         $pageId = $this->request->getAttribute('frontend.page.information')->getId();
         $pageId = $this->config['url']['pageId'] ?? $pageId;
-        $additionalParams = [];
-
-        $additionalParams = $this->getUrlFieldParameterMap($additionalParams, $data['data']);
+        $additionalParams = $this->getUrlFieldParameterMap($data['data']);
         $additionalParams = $this->getUrlAdditionalParams($additionalParams);
-
-        $additionalParamsString = http_build_query(
-            $additionalParams,
-            '',
-            '&',
-            PHP_QUERY_RFC3986
-        );
-
-        $typoLinkConfig = [
+        $data['loc'] = $this->cObj->createUrl([
             'parameter' => $pageId,
-            'additionalParams' => $additionalParamsString ? '&' . $additionalParamsString : '',
+            'queryParameters' => $additionalParams,
             'forceAbsoluteUrl' => 1,
-        ];
-
-        $data['loc'] = $this->cObj->createUrl($typoLinkConfig);
+        ]);
 
         return $data;
     }
 
-    protected function getUrlFieldParameterMap(array $additionalParams, array $data): array
+    protected function getUrlFieldParameterMap(array $data): array
     {
+        $additionalParams = [];
         if (!empty($this->config['url']['fieldToParameterMap']) &&
-            \is_array($this->config['url']['fieldToParameterMap'])) {
+            is_array($this->config['url']['fieldToParameterMap'])) {
             foreach ($this->config['url']['fieldToParameterMap'] as $field => $urlPart) {
                 $additionalParams[$urlPart] = $data[$field];
             }
         }
-
         return $additionalParams;
     }
 
